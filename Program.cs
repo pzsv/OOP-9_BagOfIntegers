@@ -21,17 +21,17 @@ namespace OOP9_BagOfIntegers
                 if (inOption <= 3)
                     inElement = readElement(inOption);
 
+                int newFreq;
 
                 switch (inOption)
                 {
                     case 1:
-                        bag.Add(inElement);
-                        displayMessage("A new instance of the integer " + inElement + " has been added to the bag.");
-                        //displayMessage("What now?");
+                        newFreq = bag.Add(inElement);
+                        displayMessage("A new instance of the integer " + inElement + " has been added to the bag. There is " + newFreq + " of it in there now.");
                         break;
 
                     case 2:
-                        int newFreq = bag.Remove(inElement);
+                        newFreq = bag.Remove(inElement);
 
                         if(newFreq != -1) 
                             displayMessage("One instance of the integer " + inElement + " has been removed from the bag. There is " + newFreq + " of it left.");
@@ -43,7 +43,23 @@ namespace OOP9_BagOfIntegers
                         displayMessage("Frequency of the integer " + inElement + " in the bag is: " + bag.GetFrequency(inElement));
                         break;
 
+                    case 5:
+                        displayMessage("Number of elements occurring only once: " + bag.GetNumberOfSingles());
+                        break;
+
                     case 6:
+
+                        KeyValuePair<int, int> ret = new KeyValuePair<int, int>(-1, -1);
+
+                        string printBagMsg = "Current contents of the bag are: " + "\r\n";
+
+                        foreach (var pair in bag)
+                        {
+                            printBagMsg += pair.Key + " (occurs " + pair.Value + " times) \r\n";
+                            
+                        }
+                        printBagMsg += "\r\n" + "End of bag";
+                        displayMessage(printBagMsg);
                         /*SortedDictionary<int, int> d = bag.GetElements();
                         string printBagMsg = "Current contents of the bag are: " + "\r\n";
 
@@ -54,13 +70,14 @@ namespace OOP9_BagOfIntegers
                         printBagMsg += "\r\n" + "End of bag";
                         displayMessage(printBagMsg);*/
                         break;
-
+/*
                     case 7:
                         displayMessage("Bye!");
-                        break;
+                        break;*/
 
                 }
             }
+            displayMessage("Bye!");
 
         }
 
@@ -154,6 +171,7 @@ namespace OOP9_BagOfIntegers
 
         //private SortedDictionary<int, int> elements = new SortedDictionary<int, int>();
 
+        private int singleKeys = 0;
 
         public new bool ContainsKey(int key) {
 
@@ -189,26 +207,36 @@ namespace OOP9_BagOfIntegers
         //override List<>.Add() 
         //AND
         //increase frequency in pair for <key> by 1
-        //so that we take care of the base struct and of the requirement, too
         public new int Add(int key)
         {
             int ret = -1;
 
             if (this.ContainsKey(key))
             {
-                // KeyValuePair k = base.Find()
+                //adding a key that already is present
+
                 int freq = this.Get(key).Value;
+
+                //if the key occurs only once then we're adding the second instance of it, so that the number of singles will decrease by one
+                if (freq == 1) singleKeys--;
+
                 freq++;
+
+                //need to remove the old tuple and re-insert the new with the increased frequency
                 base.Remove(this.Get(key));
                 base.Add(new KeyValuePair<int, int>(key, freq));
+                ret = freq;
             }
             else
             {
+                //adding the firt occurrence of a key
                 base.Add(new KeyValuePair<int, int>(key, 1));
+                ret = 1;
+                singleKeys++;
             }
+            return ret;
         }
 
-        //opposite of Add() overriden
         public new int Remove(int key)
         {
             int ret = -1;
@@ -217,11 +245,15 @@ namespace OOP9_BagOfIntegers
             {
                 base.Remove(this.Get(key));
                 ret = 0;
+                singleKeys--;
             }
             else if (this.ContainsKey(key) && this.Get(key).Value > 1)
             {
                 int freq = this.Get(key).Value;
                 freq--;
+
+                if (freq == 1) singleKeys++;
+
                 base.Remove(this.Get(key));
                 base.Add(new KeyValuePair<int, int>(key, freq));
 
@@ -246,6 +278,10 @@ namespace OOP9_BagOfIntegers
                 ret = 0;
             }
             return ret;
+        }
+
+        public int GetNumberOfSingles() {
+            return singleKeys;
         }
 
         /*
