@@ -11,58 +11,84 @@ namespace OOP9_BagOfIntegers
             BagK bag = new BagK();
 
             //declare user input variables
-            int inOption;
+            int inOption = 0;
             int inElement = 0;
 
-            //exit program when user inputs 6 (exit), till then loop and manipulate bag
-            while ((inOption = menu()) != 6)
+                //exit program when user inputs 6 (exit), till then loop and manipulate bag
+                //while ((inOption = menu()) != 6)
+
+            do
             {
+                try
+                {
+                    inOption = menu();
+
+                    if (inOption < 1 || inOption > 6)
+                        throw new Exception("Range");
+                }
+                catch (FormatException e)
+                {
+                    inOption = 999;
+                    displayMessage("Please use the option numbers only!");
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "Range")
+                    {
+                        inOption = 999;
+                        displayMessage("Please only input numbers falling between 1 and 6!");
+                    }
+                }
+
                 //we need to know the integer to manipulate in case of meu options 1, 2 and 3
                 if (inOption <= 3)
-                    inElement = readElement(inOption);
+                        inElement = readElement(inOption);
 
-                int newFreq;
+                    int newFreq;
 
-                switch (inOption)
-                {
-                    case 1:
-                        newFreq = bag.Add(inElement);
-                        displayMessage("A new instance of the integer " + inElement + " has been added to the bag. There is " + newFreq + " of it in there now.");
-                        break;
+                    switch (inOption)
+                    {
+                        case 1:
+                            newFreq = bag.Add(inElement);
+                            displayMessage("A new instance of the integer " + inElement + " has been added to the bag. There is " + newFreq + " of it in there now.");
+                            break;
 
-                    case 2:
-                        newFreq = bag.Remove(inElement);
+                        case 2:
+                            newFreq = bag.Remove(inElement);
 
-                        if(newFreq != -1) 
-                            displayMessage("One instance of the integer " + inElement + " has been removed from the bag. There is " + newFreq + " of it left.");
-                        else
-                            displayMessage("There is no " + inElement + " in the bag to remove.");
-                        break;
+                            if (newFreq != -1)
+                                displayMessage("One instance of the integer " + inElement + " has been removed from the bag. There is " + newFreq + " of it left.");
+                            else
+                                displayMessage("There is no " + inElement + " in the bag to remove.");
+                            break;
 
-                    case 3:
-                        displayMessage("Frequency of the integer " + inElement + " in the bag is: " + bag.GetFrequency(inElement));
-                        break;
+                        case 3:
+                            displayMessage("Frequency of the integer " + inElement + " in the bag is: " + bag.GetFrequency(inElement));
+                            break;
 
-                    case 4:
-                        displayMessage("Number of elements occurring only once: " + bag.GetNumberOfSingles());
-                        break;
+                        case 4:
+                            displayMessage("Number of elements occurring only once: " + bag.GetNumberOfSingles());
+                            break;
 
-                    case 5:
+                        case 5:
 
-                        KeyValuePair<int, int> ret = new KeyValuePair<int, int>(-1, -1);
+                            KeyValuePair<int, int> ret = new KeyValuePair<int, int>(-1, -1);
 
-                        string printBagMsg = "Current contents of the bag are: " + "\r\n";
+                            string printBagMsg = "Current contents of the bag are: " + "\r\n";
 
-                        foreach (var pair in bag)
-                        {
-                            printBagMsg += pair.Key + " (occurs " + pair.Value + " times) \r\n";
-                            
-                        }
-                        printBagMsg += "\r\n" + "End of bag";
-                        displayMessage(printBagMsg);
-                        break;
-                }
-            }
+                            foreach (var pair in bag)
+                            {
+                                printBagMsg += pair.Key + " (occurs " + pair.Value + " times) \r\n";
+
+                            }
+                            printBagMsg += "\r\n" + "End of bag";
+                            displayMessage(printBagMsg);
+                            break;
+                    }
+            } while (inOption != 6);
+
+
+
             displayMessage("Bye!");
         }
 
